@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./tools/sb.py:*)",
+      "Bash(tools/sb.py:*)",
+      "Bash(./tools/serve.sh:*)",
+      "Bash(tools/serve.sh:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(sed -n:*)",
+      "Bash(python3 -m http.server:*)",
+      "WebFetch(domain:supabase.com)"
+    ]
+  }
+}
