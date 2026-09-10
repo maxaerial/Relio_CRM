@@ -1,0 +1,84 @@
+<script>
+(function() {
+  var SUPABASE_URL = "https://ftkriccztlcwccgetdqt.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_qpOqA2VwlZDxXEJL86-Wpw_cv15argD";
+  var COMPANY_ID   = "00000000-0000-0000-0000-000000000001";
+  var HOME_URL     = "https://www.paironloop.com";
+  var REDIRECT_SEC = 4;
+  var params     = new URLSearchParams(window.location.search);
+  var hotelParam = (params.get("hotel")  || "").trim();
+  var statParam  = (params.get("status") || "").trim();
+  if (hotelParam) {
+    document.getElementById("pol-hotel-name").textContent = hotelParam;
+    document.getElementById("pol-badge").style.display = "block";
+  }
+  window.polChoice = function(status) {
+    if (!hotelParam) { polError("Kein Hotel-Name in der URL. Bitte den Link aus der E-Mail verwenden."); return; }
+    document.getElementById("pol-main").style.display    = "none";
+    document.getElementById("pol-loading").style.display = "flex";
+    polProcess(hotelParam, status);
+  };
+  var MAP = {
+    interested: { kontaktStatus:"Aktiv",   newsletter:"ja",   phase:"Interesse",   touchpoint:"Kooperationsanfrage – Interesse bestätigt",  reaktion:"Interessiert – möchte mehr erfahren",               score:9,  icon:"✅", title:"Super, freut uns sehr!",       text:"Wir haben eure Rückmeldung erhalten und melden uns in den nächsten Tagen bei euch!", iconBg:"rgba(90,138,90,0.12)"   },
+    maybe:      { kontaktStatus:"Lead",    newsletter:"ja",    phase:"Bewusstsein", touchpoint:"Kooperationsanfrage – Vielleicht später",     reaktion:"Aktuell kein Interesse – gerne in Kontakt bleiben", score:5,  icon:"🔄", title:"Verstanden – kein Problem!",   text:"Wir respektieren eure Entscheidung und melden uns gelegentlich mit News.",           iconBg:"rgba(123,143,168,0.12)" },
+    no:         { kontaktStatus:"Inaktiv", phase:"Bewusstsein", touchpoint:"Kooperationsanfrage – Kein Interesse",        reaktion:"Kein Interesse – keine weiteren Nachrichten",       score:2,  icon:"👍", title:"Danke für eure Ehrlichkeit!", text:"Ihr werdet keine weiteren Nachrichten von uns erhalten. Alles Gute!",               iconBg:"rgba(139,115,85,0.12)"  }
+  };
+  function labelFor(s) { return {interested:"Ja, interessiert", maybe:"Vielleicht später", no:"Kein Interesse"}[s]||s; }
+  async function polProcess(hotel, status) {
+    var m = MAP[status];
+    if (!m) { polError("Ungültiger Status: " + status); return; }
+    try {
+      if (!window.supabase || typeof window.supabase.createClient !== "function") {
+        throw new Error("Supabase-Bibliothek nicht geladen.");
+      }
+      var sb  = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      var res = await sb.rpc("kooperation_antwort", { hotel: hotel, antwort: status });
+      if (res.error) throw res.error;
+      polSuccess(m);
+    } catch(err) {
+      console.error("CRM Error:", err);
+      polError("Fehler beim Speichern: " + (err.message || JSON.stringify(err)));
+    }
+  }
+  function polSuccess(m) {
+    document.getElementById("pol-loading").style.display  = "none";
+    document.getElementById("pol-success").style.display  = "block";
+    document.getElementById("pol-success-icon").textContent      = m.icon;
+    document.getElementById("pol-success-icon").style.background  = m.iconBg;
+    document.getElementById("pol-success-title").textContent     = m.title;
+    document.getElementById("pol-success-text").textContent      = m.text;
+    var note = document.getElementById("pol-redirect-note");
+    var secs = REDIRECT_SEC;
+    note.textContent = "Ihr werdet in " + secs + " Sekunden weitergeleitet…";
+    var iv = setInterval(function(){
+      secs--;
+      if (secs <= 0) { clearInterval(iv); window.location.href = HOME_URL; }
+      else note.textContent = "Ihr werdet in " + secs + " Sekunde" + (secs===1?"":"n") + " weitergeleitet…";
+    }, 1000);
+  }
+  function polError(msg) {
+    document.getElementById("pol-loading").style.display = "none";
+    document.getElementById("pol-main").style.display    = "block";
+    var el = document.getElementById("pol-error");
+    el.style.display = "block";
+    el.textContent   = "⚠ " + msg;
+  }
+  if (statParam && hotelParam) {
+    var confirmMap = {
+      interested: { cls: "yes", icon: "✅", label: "Sì, siamo interessati" },
+      maybe: { cls: "maybe", icon: "🔄", label: "Forse più avanti" },
+      no: { cls: "no", icon: "❌", label: "Non siamo interessati" }
+    };
+    var cm = confirmMap[statParam];
+    if (cm) {
+      var box = document.getElementById("pol-options");
+      var card = document.createElement("div");
+      card.className = "pol-card pol-" + cm.cls;
+      card.innerHTML = "<div class='pol-icon pol-icon-" + cm.cls + "'>" + cm.icon + "</div><div class='pol-text'><span class='pol-title'>Conferma: " + cm.label + "</span><span class='pol-desc'>Tocca qui per confermare la tua risposta</span></div><span class='pol-arrow'>→</span>";
+      card.addEventListener("click", function () { polChoice(statParam); });
+      box.innerHTML = "";
+      box.appendChild(card);
+    }
+  }
+})();
+</script>

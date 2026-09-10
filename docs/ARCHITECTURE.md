@@ -16,7 +16,7 @@ Eine Datei, drei Zonen. Zeilennummern sind Stand des letzten Doku-Updates und wa
 |---|---|
 | ~1325 | Login-/Register-Screen inkl. Demo-Account-Box |
 | ~1380 | Mobile-Topbar |
-| ~1427 | Sidebar (Relio-Logo × Firmenlogo, Navigation, User-Block) |
+| ~1427 | Sidebar (Relio-Logo × Firmenlogo, Navigation, User-Block). Reihenfolge seit 10.09.2026: Dashboard, Kontakte, Journey, Aktivitäten, Pipeline, E-Mail, Hilfe — Mobile-Nav (~1394) gleich halten |
 | 1522 | `page-dashboard` |
 | 1605 | `page-journey` |
 | 1659 | `page-kontakte` |

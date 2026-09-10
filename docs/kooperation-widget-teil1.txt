@@ -1,0 +1,101 @@
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+#pol-wrap * { box-sizing: border-box; margin: 0; padding: 0; }
+#pol-wrap { font-family: 'Georgia', 'Times New Roman', serif; background: #F5F2EC; width: 100%; min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; }
+#pol-inner { width: 100%; }
+#pol-logo { font-family: 'Georgia', serif; font-size: 13px; letter-spacing: 0.35em; color: #8B7355; text-transform: uppercase; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.pol-line { width: 32px; height: 1px; background: #C4A882; flex-shrink: 0; }
+#pol-heading { font-family: 'Georgia', serif; font-size: clamp(24px, 4vw, 36px); font-weight: 400; color: #2C2416; line-height: 1.25; margin-bottom: 10px; letter-spacing: -0.02em; }
+#pol-heading em { font-style: italic; color: #8B7355; }
+#pol-sub { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 15px; color: #7A6E60; line-height: 1.6; margin-bottom: 36px; }
+#pol-badge { display: none; margin-bottom: 28px; }
+#pol-badge span { display: inline-block; background: #EDE8E0; border: 1px solid #D4C8B8; border-radius: 2px; padding: 4px 14px; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #8B7355; }
+#pol-options { display: flex; flex-direction: column; gap: 12px; max-width: 560px; margin: 0 auto 36px auto; }
+.pol-card { background: #FFFFFF !important; border: 1.5px solid #E8E0D4 !important; border-radius: 4px !important; padding: 18px 22px !important; display: flex !important; align-items: center !important; gap: 16px !important; cursor: pointer !important; transition: all 0.2s ease !important; text-align: left !important; position: relative !important; overflow: hidden !important; width: 100% !important; text-decoration: none !important; color: inherit !important; }
+.pol-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; transition: background 0.2s; }
+.pol-card:hover { transform: translateY(-1px) !important; box-shadow: 0 4px 20px rgba(139,115,85,0.12) !important; }
+.pol-yes:hover { border-color: #5A8A5A !important; }
+.pol-yes:hover::before { background: #5A8A5A; }
+.pol-maybe:hover { border-color: #7B8FA8 !important; }
+.pol-maybe:hover::before { background: #7B8FA8; }
+.pol-no:hover { border-color: #B87070 !important; }
+.pol-no:hover::before { background: #B87070; }
+.pol-icon { width: 42px !important; height: 42px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0 !important; font-size: 18px !important; }
+.pol-icon-yes { background: rgba(90,138,90,0.10) !important; }
+.pol-icon-maybe { background: rgba(123,143,168,0.10) !important; }
+.pol-icon-no { background: rgba(184,112,112,0.10) !important; }
+.pol-text { flex: 1 !important; }
+.pol-title { font-family: 'Georgia', serif !important; font-size: 16px !important; font-weight: 400 !important; color: #2C2416 !important; margin-bottom: 2px !important; display: block !important; }
+.pol-desc { font-family: 'Helvetica Neue', Arial, sans-serif !important; font-size: 13px !important; color: #9A8E80 !important; line-height: 1.4 !important; display: block !important; }
+.pol-arrow { color: #C4A882 !important; font-size: 18px !important; flex-shrink: 0 !important; transition: transform 0.2s !important; font-style: normal !important; }
+.pol-card:hover .pol-arrow { transform: translateX(4px) !important; }
+#pol-loading { display: none; flex-direction: column; align-items: center; gap: 14px; padding: 48px 20px; }
+#pol-spinner { width: 30px; height: 30px; border: 2px solid #E8E0D4; border-top-color: #8B7355; border-radius: 50%; animation: pol-spin 0.7s linear infinite; }
+@keyframes pol-spin { to { transform: rotate(360deg); } }
+#pol-loading p { font-family: 'Helvetica Neue', Arial, sans-serif !important; font-size: 14px !important; color: #9A8E80 !important; }
+#pol-success { display: none; padding: 48px 20px; }
+#pol-success-icon { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 18px auto; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+#pol-success-title { font-family: 'Georgia', serif !important; font-size: 24px !important; color: #2C2416 !important; margin-bottom: 10px !important; font-weight: 400 !important; display: block !important; }
+#pol-success-text { font-family: 'Helvetica Neue', Arial, sans-serif !important; font-size: 15px !important; color: #7A6E60 !important; line-height: 1.6 !important; max-width: 400px !important; margin: 0 auto 12px auto !important; display: block !important; }
+#pol-redirect-note { font-family: 'Helvetica Neue', Arial, sans-serif !important; font-size: 13px !important; color: #B0A898 !important; display: block !important; }
+#pol-error { display: none; background: rgba(184,112,112,0.08); border: 1px solid rgba(184,112,112,0.25); border-radius: 4px; padding: 14px 18px; margin-bottom: 18px; font-family: 'Helvetica Neue', Arial, sans-serif !important; font-size: 13px !important; color: #B87070 !important; max-width: 560px; margin-left: auto; margin-right: auto; }
+#pol-footer { font-family: 'Helvetica Neue', Arial, sans-serif !important; font-size: 12px !important; color: #B0A898 !important; line-height: 1.6 !important; margin-top: 8px !important; }
+#pol-footer a { color: #8B7355 !important; text-decoration: none !important; }
+</style>
+<div id="pol-wrap">
+  <div id="pol-inner">
+    <div id="pol-logo">
+      <div class="pol-line"></div>
+      PAIR ON LOOP
+      <div class="pol-line"></div>
+    </div>
+    <div id="pol-error"></div>
+    <div id="pol-main">
+      <div id="pol-heading">Zusammenarbeit mit <em>PairOnLoop</em></div>
+      <div id="pol-badge"><span id="pol-hotel-name"></span></div>
+      <p id="pol-sub">Vielen Dank, dass ihr euch die Zeit nehmt.<br>Wählt einfach die Option, die am besten zu euch passt.</p>
+      <div id="pol-options">
+        <div class="pol-card pol-yes" onclick="polChoice('interested')">
+          <div class="pol-icon pol-icon-yes">✅</div>
+          <div class="pol-text">
+            <span class="pol-title">Ja, wir sind interessiert!</span>
+            <span class="pol-desc">Wir möchten mehr erfahren und uns gerne austauschen.</span>
+          </div>
+          <span class="pol-arrow">→</span>
+        </div>
+        <div class="pol-card pol-maybe" onclick="polChoice('maybe')">
+          <div class="pol-icon pol-icon-maybe">🔄</div>
+          <div class="pol-text">
+            <span class="pol-title">Vielleicht später</span>
+            <span class="pol-desc">Aktuell kein Interesse, aber gerne in Kontakt bleiben.</span>
+          </div>
+          <span class="pol-arrow">→</span>
+        </div>
+        <div class="pol-card pol-no" onclick="polChoice('no')">
+          <div class="pol-icon pol-icon-no">❌</div>
+          <div class="pol-text">
+            <span class="pol-title">Kein Interesse</span>
+            <span class="pol-desc">Bitte keine weiteren Nachrichten senden.</span>
+          </div>
+          <span class="pol-arrow">→</span>
+        </div>
+      </div>
+    </div>
+    <div id="pol-loading">
+      <div id="pol-spinner"></div>
+      <p>Wird gespeichert…</p>
+    </div>
+    <div id="pol-success">
+      <div id="pol-success-icon"></div>
+      <span id="pol-success-title"></span>
+      <span id="pol-success-text"></span>
+      <span id="pol-redirect-note"></span>
+    </div>
+    <div id="pol-footer">
+      PairOnLoop – Max &amp; Elena<br>
+      <a href="mailto:info@paironloop.com">info@paironloop.com</a>
+      &nbsp;·&nbsp;
+      <a href="https://www.paironloop.com">www.paironloop.com</a>
+    </div>
+  </div>
+</div>

@@ -63,7 +63,8 @@ Stand der Erhebung: siehe `tools/sb.py tables` für aktuelle Zahlen.
 `id`, `nr`, `unternehmen`, `unternehmen_url`, `vorname`, `nachname`, `geschlecht`,
 `ort`, `land`, `email`, `telefon`, `homepage`, `kanal`, `status`, `branche`, `dealwert`,
 `erster_kontakt`, `letzter_kontakt`, `naechste_aktion`, `kommentar`,
-`individueller_satz`, `sprache`, `newsletter`, `created_at`, `user_id`, `company_id`
+`individueller_satz`, `sprache`, `newsletter`, `key_account` (Name aus `team_members`, seit 10.09.2026),
+`created_at`, `user_id`, `company_id`
 
 **`journey`**
 `id`, `nr`, `kunde`, `kontakt_id`, `datum`, `phase`, `touchpoint`, `kanal`, `aktivitaet`,
@@ -172,3 +173,49 @@ select count(*) from public.kontakte where company_id is null;
 
 Zeilen ohne `company_id` vorher der richtigen Firma zuordnen oder die Policy übergangs-
 weise um `or user_id = auth.uid()` erweitern.
+
+### Korrektur 10.09.2026 (erhoben per `supabase db query --linked`)
+
+Die Diagnose oben ist nur halb richtig. **RLS ist auf allen Tabellen aktiv**, und die
+Policies für angemeldete Nutzer sind überall auf `company_id = profiles.company_id`
+begrenzt. Presio-Daten sind weder anonym lesbar noch für PairOnLoop-Nutzer sichtbar.
+
+Die anonyme Lesbarkeit stammt aus **gezielt angelegten `anon`-Policies**, alle auf die
+Firma PairOnLoop (`…0001`) beschränkt: SELECT, INSERT und **UPDATE** auf `kontakte`,
+SELECT und INSERT auf `journey` und `aktivitaeten`. Namen wie `kooperation_anon_select`
+und `anon_select_kontakte_nr` deuten auf Kooperations-Links und den Newsletter-Weg
+außerhalb dieses Repos. Bevor sie entfernt werden, muss klar sein, welche Seite sie
+nutzt. Inventar und Minimal-Fix: [`docs/rls-fix.sql`](rls-fix.sql).
+
+Weitere Befunde:
+- Tabelle `company_integrations` (`company_id`, `resend_api_key`, `updated_at`) fehlt
+  oben in der Liste.
+- Edge Functions außer den drei dokumentierten: `newsletter-webhook`, `instagram-dm`,
+  `quick-endpoint`, `smooth-endpoint`.
+- Region des Projekts ist `eu-west-1`, nicht `eu-central-1`.
+- Es existieren **zwei Firmen namens Presio**: `22de32b1…` (Juni 2026, Konto
+  christoph.gerhardt@gmail.com, 4 Kontakte / 19 Journey / 2 Deals Testdaten) und
+  `53c317ee…` (September 2026, max.weidmann@presio.eu + christoph.gerhardt@presio.eu,
+  leer). Die zweite ist die produktive.
+- Zugang von diesem Mac: `supabase link --project-ref ftkriccztlcwccgetdqt` in einem
+  Ordner außerhalb des Repos, dann `supabase db query --linked "<sql>"`. Kein
+  DB-Passwort nötig, läuft über die Management-API der eingeloggten CLI.
+
+### Erledigt 10.09.2026
+
+- Kooperationsseite `paironloop.com/kooperation/` ruft jetzt nur noch die Datenbankfunktion
+  `kooperation_antwort(hotel, antwort)` auf (SECURITY DEFINER, fest auf PairOnLoop).
+  Quelle: [`docs/kooperation-rpc.sql`](kooperation-rpc.sql); Widget-Inhalt in zwei Teilen
+  (Elementor-Grenze ~150 Zeilen): `kooperation-widget-teil1.txt` (CSS + Karten) und
+  `kooperation-widget-teil2.txt` (Skript).
+- Anonyme SELECT- und UPDATE-Policies auf `kontakte`, `journey`, `aktivitaeten` entfernt.
+  `tools/sb.py tables` zeigt alle drei als geschützt. Verblieben sind die anon-INSERT-Policies
+  (`anon_insert_kooperation`, `kooperation_anon_insert`) für den Newsletter-Weg; ob
+  `newsletter-webhook` sie braucht, ist ungeprüft (Quellcode-Download hängt).
+- Live-Test mit „Testhotel Claude" bestanden, Testdaten wieder gelöscht.
+- **Key Account je Unternehmen** (10.09.2026): Spalte `kontakte.key_account` (Text, Name des
+  Teammitglieds wie bei `aktivitaeten.verantwortlich`). Dropdowns werden aus `teamMembers`
+  gefüllt (`fillVerantwortlichDropdowns`), Filter und Sortierung in der Kontaktliste,
+  Feld in Anlegen/Bearbeiten/Sammelbearbeitung, Detailseite, Import/Export. Für Presio
+  sind drei `team_members` eingetragen und die 50 Leads reihum nach Priorität und
+  Deal-Wert auf Max, Christoph und Elena verteilt.
