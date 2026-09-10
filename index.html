@@ -2439,6 +2439,8 @@ tbody td { font-feature-settings: "zero" 0; }
               <option>YouTube</option>
               <option>TikTok</option>
               <option>E-Mail</option>
+              <option>Telefon</option>
+              <option>Vor Ort</option>
               <option>Mündlich</option>
               <option>Website</option>
               <option>Empfehlung</option>
@@ -2497,6 +2499,8 @@ tbody td { font-feature-settings: "zero" 0; }
               <option>YouTube</option>
               <option>TikTok</option>
               <option>E-Mail</option>
+              <option>Telefon</option>
+              <option>Vor Ort</option>
               <option>Mündlich</option>
               <option>Website</option>
               <option>Empfehlung</option>
@@ -2706,7 +2710,7 @@ tbody td { font-feature-settings: "zero" 0; }
         <div class="field"><label>Status</label>
           <select id="bk-status"><option value="">— unverändert —</option><option>Lead</option><option>Aktiv</option><option>Abgeschlossen</option><option>Inaktiv</option></select>
         </div>
-        <div class="field"><label>Kanal</label><select id="bk-kanal"><option value="">— unverändert —</option><option>Instagram</option><option>YouTube</option><option>TikTok</option><option>E-Mail</option><option>Mündlich</option><option>Website</option><option>Empfehlung</option><option>Messe</option></select></div>
+        <div class="field"><label>Kanal</label><select id="bk-kanal"><option value="">— unverändert —</option><option>Instagram</option><option>YouTube</option><option>TikTok</option><option>E-Mail</option><option>Telefon</option><option>Vor Ort</option><option>Mündlich</option><option>Website</option><option>Empfehlung</option><option>Messe</option></select></div>
         <div class="field"><label>Branche</label>
           <select id="bk-branche">
             <option value="">— unverändert —</option>
@@ -2804,6 +2808,8 @@ tbody td { font-feature-settings: "zero" 0; }
               <option>YouTube</option>
               <option>TikTok</option>
               <option>E-Mail</option>
+              <option>Telefon</option>
+              <option>Vor Ort</option>
               <option>Mündlich</option>
               <option>Website</option>
               <option>Empfehlung</option>
@@ -2848,6 +2854,8 @@ tbody td { font-feature-settings: "zero" 0; }
               <option>YouTube</option>
               <option>TikTok</option>
               <option>E-Mail</option>
+              <option>Telefon</option>
+              <option>Vor Ort</option>
               <option>Mündlich</option>
               <option>Website</option>
               <option>Empfehlung</option>
@@ -3071,7 +3079,7 @@ function setKanalValue(prefix, val) {
   const sel = document.getElementById(prefix);
   const custom = document.getElementById(prefix + "-custom");
   if(!sel) return;
-  const knownVals = ["Instagram","YouTube","TikTok","E-Mail","Mündlich","Website","Empfehlung","Messe",""];
+  const knownVals = ["Instagram","YouTube","TikTok","E-Mail","Telefon","Vor Ort","Mündlich","Website","Empfehlung","Messe",""];
   if(knownVals.includes(val)) {
     sel.value = val;
     if(custom) custom.style.display = "none";
