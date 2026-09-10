@@ -4,7 +4,7 @@
 Actuvo-Ausgründung. Dieses Repo ist die komplette Anwendung.
 
 - **Live:** https://crm.paironloop.com (GitHub Pages, `CNAME` im Repo-Root)
-- **Repo:** `maxaerial/paironloop-crm`
+- **Repo:** `maxaerial/Relio_CRM` (bis 10.09.2026 `paironloop-crm`)
 - **Backend:** Supabase-Projekt `ftkriccztlcwccgetdqt` (EU) — Postgres + Auth + Edge Functions
 - **Stack:** Eine einzige `index.html` (~8.500 Zeilen), Vanilla JS, keine Build-Kette,
   keine Dependencies außer zwei CDN-Skripten (`@supabase/supabase-js@2`, `chart.js@4.4.1`)
@@ -51,15 +51,18 @@ tools/sb.py rows journey --where 'phase=eq.Angebot'
 ```
 
 Ohne Konfiguration nutzt das Skript den öffentlichen Publishable Key aus `index.html` —
-damit sind nur `kontakte`, `journey` und `aktivitaeten` lesbar. Für vollen Zugriff
-`.env.example` nach `.env` kopieren und `SUPABASE_SECRET_KEY` bzw. `SUPABASE_DB_URL`
-eintragen; dann liefert `tools/sb.py schema` das komplette Schema und `tools/db.sh`
-echtes SQL. Woher die Werte kommen, steht in
-[`docs/SUPABASE.md`](docs/SUPABASE.md#zugang-einrichten). Keys gehören nie ins Repo.
+damit ist seit dem 10.09.2026 nichts mehr anonym lesbar (nur noch eine Zeilenzahl-Übersicht
+mit „RLS-geschuetzt"). Für vollen Zugriff gibt es zwei Wege:
 
-> ⚠️ Dass diese drei Tabellen ohne Login lesbar sind, ist ein **offenes
-> Sicherheitsproblem** mit echten Kundendaten. Details und Fix:
-> [`docs/SUPABASE.md#rls-lücke`](docs/SUPABASE.md).
+- **Supabase-CLI** (empfohlen, kein Passwort nötig): in einem Ordner außerhalb des Repos
+  `supabase link --project-ref ftkriccztlcwccgetdqt`, dann
+  `supabase db query --linked "<sql>"` bzw. `--linked -f datei.sql`. Ausgabe ist JSON
+  mit den Zeilen unter `rows`.
+- `.env.example` nach `.env` kopieren und `SUPABASE_SECRET_KEY` bzw. `SUPABASE_DB_URL`
+  eintragen; dann liefert `tools/sb.py schema` das Schema und `tools/db.sh` echtes SQL.
+
+Keys gehören nie ins Repo. Der Stand der Policies (RLS überall an, nur noch anon-INSERT
+für den Newsletter-Weg) steht in [`docs/SUPABASE.md`](docs/SUPABASE.md#rls-lücke).
 
 ## Deployen
 
