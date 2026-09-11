@@ -1646,6 +1646,7 @@ tbody td { font-feature-settings: "zero" 0; }
             <button class="btn-export" onclick="downloadTemplate('journey')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Template</button>
             <button class="btn-export" onclick="triggerImport('journey')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importieren</button>
             <button class="btn-export" onclick="exportCSV('journey')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exportieren</button>
+            <button class="btn-export" id="btn-sprachnotiz" onclick="sprachnotizStarten()" title="Sprachnotiz: Firma und Ergebnis einfach diktieren" aria-label="Sprachnotiz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg> Sprachnotiz</button>
             <button class="btn btn-primary" style="font-size:12px;padding:6px 12px" onclick="openModal('modal-journey')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Touchpoint</button>
           </div>
           <div class="table-wrap" id="journey-table-wrap">
@@ -2510,7 +2511,16 @@ tbody td { font-feature-settings: "zero" 0; }
             <input id="j-kanal-custom" placeholder="Kanal eingeben…" style="display:none;margin-top:6px;width:100%"></div>
         <div class="field"><label>Touchpoint</label><input id="j-touchpoint"></div>
         <div class="field"><label>Score (1–10)</label><input id="j-score" type="number" min="1" max="10" value="5"></div>
-        <div class="field form-full"><label data-i18n="activity">Aktivität</label><textarea id="j-aktivitaet" rows="2"></textarea></div>
+        <div class="field form-full"><label data-i18n="activity">Aktivität</label>
+          <div style="position:relative">
+            <textarea id="j-aktivitaet" rows="2" style="width:100%;padding-right:40px"></textarea>
+            <button type="button" id="j-mic" onclick="sprachnotizToggle()" title="Diktieren — der Kunde wird aus dem Gesagten erkannt"
+              style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:999px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+            </button>
+          </div>
+          <div id="j-mic-hinweis" style="display:none;font-size:11px;margin-top:4px;color:var(--text3)"></div>
+        </div>
         <div class="field form-full"><label data-i18n="client_reaction">Kundenreaktion</label><textarea id="j-reaktion" rows="2"></textarea></div>
       </div>
     </div>
@@ -7450,6 +7460,135 @@ function getColors(labels) { return labels.map((l,i)=>getColor(l,i)); }
 
 // ── JOURNEY KUNDE DROPDOWN ──────────────────────────────────────────────────
 function showJourneyKundeDD() { filterJourneyKunde(document.getElementById("j-kunde").value); }
+
+// ── SPRACHNOTIZ ───────────────────────────────────────────────────────────────
+// Diktieren statt tippen: Der gesprochene Text landet im Aktivitätsfeld, und der
+// genannte Kunde wird aus der eigenen Kontaktliste erkannt. Die Erkennung läuft
+// im Browser (Web Speech API) — es verlässt keine Aufnahme diesen Rechner an
+// einen Dienst von uns. In Chrome übernimmt Google die Umwandlung, das gehört in
+// die Datenschutzhinweise.
+let _mic = null, _micText = "";
+
+// Namen vergleichbar machen: Kleinschreibung, Umlaute aufgelöst, Rechtsformen und
+// Füllwörter raus. "Café Maurer" und "cafe maurer gmbh" sollen sich treffen.
+const _MIC_STOPP = new Set(["gmbh","co","kg","ag","ug","ohg","mbh","ev","e","v","und","der","die","das",
+  "am","an","im","in","von","fuer","des","dr","prof","gbr","mbb","kgaa","se","inh","gruppe","muenchen"]);
+function _micNorm(t) {
+  return (t||"").toLowerCase()
+    .replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss")
+    .replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+}
+function _micWorte(t) { return _micNorm(t).split(" ").filter(w => w.length > 3 && !_MIC_STOPP.has(w)); }
+
+// Sucht den Kontakt, dessen Name im gesprochenen Text vorkommt. Liefert nur ein
+// Ergebnis, wenn es eindeutig ist — sonst lieber nichts vorschlagen.
+function kundeAusText(text) {
+  const t = _micNorm(text);
+  if(!t || !Array.isArray(kontakteData)) return null;
+  const treffer = [];
+  kontakteData.forEach(k => {
+    const worte = _micWorte(k.unternehmen);
+    if(!worte.length) return;
+    const voll = _micNorm(k.unternehmen);
+    let punkte = 0;
+    if(voll && t.includes(voll)) punkte += 10;                    // ganzer Name gesagt
+    worte.forEach(w => { if(t.includes(w)) punkte += w.length; }); // einzelne Namensteile
+    if(punkte > 0) treffer.push({k, punkte});
+  });
+  if(!treffer.length) return null;
+  treffer.sort((a,b) => b.punkte - a.punkte);
+  if(treffer[0].punkte < 6) return null;                          // zu schwach
+  if(treffer[1] && treffer[1].punkte === treffer[0].punkte) return null; // mehrdeutig
+  return treffer[0].k;
+}
+
+// Grobe Einordnung aus dem Gesagten. Nur ein Vorschlag, der Nutzer entscheidet.
+function _micPhase(text) {
+  const t = _micNorm(text);
+  if(/kein interesse|nicht interessiert|absage|kein bedarf/.test(t)) return {phase:"Bewusstsein", score:2};
+  if(/auftrag|zugesagt|kauft|vertrag unterschrieben|bestellt/.test(t))  return {phase:"Kauf", score:9};
+  if(/angebot|preis geschickt|kalkulation/.test(t))                     return {phase:"Angebot", score:8};
+  if(/interessiert|sehr gut|termin|demo|melde mich|rueckmeldung/.test(t)) return {phase:"Interesse", score:7};
+  return {phase:"Bewusstsein", score:5};
+}
+
+function _micHinweis(txt, farbe) {
+  const el = document.getElementById("j-mic-hinweis");
+  if(!el) return;
+  el.textContent = txt || "";
+  el.style.color = farbe || "var(--text3)";
+  el.style.display = txt ? "block" : "none";
+}
+
+// Öffnet das Touchpoint-Fenster und startet sofort die Aufnahme.
+function sprachnotizStarten() {
+  openModal("modal-journey");
+  const kanal = document.getElementById("j-kanal");
+  if(kanal && !kanal.value) setKanalValue("j-kanal", "Vor Ort");
+  const datum = document.getElementById("j-datum");
+  if(datum && !datum.value) datum.value = new Date().toISOString().split("T")[0];
+  setTimeout(() => sprachnotizToggle(true), 250);
+}
+
+function sprachnotizToggle(startenErzwingen) {
+  const Erk = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const knopf = document.getElementById("j-mic");
+  if(!Erk) {
+    _micHinweis("Dieser Browser kann nicht diktieren. In Chrome oder Safari funktioniert es, "
+      + "sonst das Diktat des Betriebssystems nutzen.", "var(--orange)");
+    return;
+  }
+  if(_mic && !startenErzwingen) { _mic.stop(); return; }
+  if(_mic) return;
+
+  const feld = document.getElementById("j-aktivitaet");
+  _micText = feld && feld.value ? feld.value.trim() + " " : "";
+  const erk = new Erk();
+  erk.lang = (lang === "en" ? "en-US" : lang === "fr" ? "fr-FR" : lang === "es" ? "es-ES" : "de-DE");
+  erk.continuous = true;
+  erk.interimResults = true;
+  _mic = erk;
+  if(knopf) { knopf.style.background = "var(--red)"; knopf.style.borderColor = "var(--red)"; knopf.style.color = "#fff"; }
+  _micHinweis("Aufnahme läuft — sprich Firma und Ergebnis. Zum Beenden nochmal aufs Mikrofon.", "var(--red)");
+
+  erk.onresult = e => {
+    let fertig = "", laufend = "";
+    for(let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if(e.results[i].isFinal) fertig += t + " "; else laufend += t;
+    }
+    if(fertig) _micText += fertig;
+    if(feld) feld.value = (_micText + laufend).replace(/\s+/g, " ").trim();
+  };
+  erk.onerror = ev => {
+    _micHinweis(ev.error === "not-allowed"
+      ? "Kein Zugriff aufs Mikrofon. Im Browser für diese Seite erlauben."
+      : "Aufnahme abgebrochen (" + ev.error + ").", "var(--orange)");
+  };
+  erk.onend = () => {
+    _mic = null;
+    if(knopf) { knopf.style.background = "var(--bg2)"; knopf.style.borderColor = "var(--border)"; knopf.style.color = ""; }
+    const text = feld ? feld.value.trim() : "";
+    if(!text) { _micHinweis(""); return; }
+
+    const k = kundeAusText(text);
+    if(k) {
+      selectJourneyKunde(k.unternehmen, false);
+      const tp = document.getElementById("j-touchpoint");
+      if(tp && !tp.value) tp.value = "Sprachnotiz vom " + new Date().toLocaleDateString("de-DE");
+      const v = _micPhase(text);
+      const ph = document.getElementById("j-phase");
+      if(ph && [...ph.options].some(o => o.value === v.phase)) ph.value = v.phase;
+      const sc = document.getElementById("j-score");
+      if(sc) sc.value = v.score;
+      _micHinweis("Erkannt: " + k.unternehmen + " · Vorschlag Phase „" + v.phase
+        + "“. Bitte prüfen und speichern.", "var(--green)");
+    } else {
+      _micHinweis("Kein Kunde eindeutig erkannt — bitte oben auswählen oder neu anlegen.", "var(--orange)");
+    }
+  };
+  try { erk.start(); } catch(_) { _mic = null; }
+}
 
 function filterJourneyKunde(val) {
   const dd = document.getElementById("j-kunde-dropdown");
