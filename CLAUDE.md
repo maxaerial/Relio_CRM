@@ -3,7 +3,7 @@
 **Relio** ist das CRM-Produkt (Relations · Rely · Grow) neben Presio, Vocaris und der
 Actuvo-Ausgründung. Dieses Repo ist die komplette Anwendung.
 
-- **Live:** https://crm.paironloop.com (GitHub Pages, `CNAME` im Repo-Root)
+- **Live:** https://relio-crm.de (GitHub Pages, `CNAME` im Repo-Root)
 - **Repo:** `maxaerial/Relio_CRM` (bis 10.09.2026 `paironloop-crm`)
 - **Backend:** Supabase-Projekt `ftkriccztlcwccgetdqt` (EU) — Postgres + Auth + Edge Functions
 - **Stack:** Eine einzige `index.html` (~8.500 Zeilen), Vanilla JS, keine Build-Kette,

@@ -136,7 +136,7 @@ curl -s "https://ftkriccztlcwccgetdqt.supabase.co/rest/v1/kontakte?select=*&limi
 ```
 
 Da der Key im ausgelieferten `index.html` steht, kann das jeder Besucher von
-crm.paironloop.com nachvollziehen. Betroffen sind echte Kundendaten — Firmenname,
+relio-crm.de nachvollziehen. Betroffen sind echte Kundendaten — Firmenname,
 Ansprechpartner, E-Mail, Telefon, Deal-Wert, interne Kommentare. Das ist ein
 DSGVO-relevanter Datenabfluss, kein theoretisches Risiko.
 
