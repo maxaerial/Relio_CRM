@@ -128,3 +128,26 @@ Die Überarbeitung liegt bewusst als **Überschreibungsschicht am Ende des Haupt
   passt; unter 1280 px werden `.btn-export`-Beschriftungen zu Einblendungen (`.lbl`, per JS gewrappt).
 - Alle Desktop-Regeln stehen in `@media (min-width: 769px)`, damit der Mobilblock (Zeile ~1148)
   maßgeblich bleibt.
+
+### Ergänzungen der Nachtschicht 22.09.2026
+
+- **Einstellungen** sind fünf Reiter (`.settings-tabs`, `settingsTab()`, letzter Reiter in
+  `localStorage.crm_settings_tab`). Jeder `.settings-section` trägt `data-tab`; Reihenfolge
+  im Reiter „Konto“ per Inline-`order`. Neue Abschnitte: `data-tab` setzen, sonst unsichtbar.
+- **Kontakt-Formulare** (neu + bearbeiten) sind in vier Abschnitte gegliedert
+  (`.form-section`), alle Feld-IDs unverändert. Modale: fester Kopf 52 px, scrollender Body,
+  Fuß immer sichtbar, Speichern rechts.
+- **Detailseiten**: Kopfzeile einzeilig, nur die erste Aktion als Primärknopf; das
+  Stammdaten-Raster ist `minmax(300px,400px) 1fr` statt drei gleicher Spalten.
+- **Demo-Modus**: `renderKontakte/Journey/Pipeline/Aktivitaeten/Dashboard` weichen bei
+  `isDemoMode` sofort auf die Demo-Variante aus. Vorher leerten Filter, Sortierung und
+  Farbschema-Wechsel die Listen, weil sie gegen Supabase liefen.
+- **Einblendungen**: `title`-Attribute werden beim ersten Überfahren in `data-tip`
+  umgesetzt (`initOberflaeche`), CSS zeigt sie sofort und ohne Verzögerung. Neue Knöpfe
+  brauchen also weiterhin nur `title`.
+- **Dashboard-Kacheln** sind anklickbar und öffnen die passende Liste (Leads mit Filter).
+- **Mobiles Logo** ist Inline-SVG; die frühere Data-URL konnte `var(--text)` nicht
+  auflösen, der Schriftzug war unsichtbar.
+- **Sprünge vermeiden**: `html { overflow-y: scroll }`, `.page { padding: 0 }` (nur der
+  innere Wrapper trägt 16/20 px), Suchfeld fest 320 px. Gemessen: Kopfzeile und erster
+  Inhalt stehen auf allen Reitern an derselben Stelle.

@@ -1485,6 +1485,13 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
   background: var(--text); color: var(--bg); font-size: 11.5px; font-weight: 600; padding: 4px 8px; border-radius: 6px;
   white-space: nowrap; z-index: 300; pointer-events: none; box-shadow: var(--shadow-sm); }
 .topbar-right [data-tip]:hover::after, .toolbar > :last-child[data-tip]:hover::after { left: auto; right: 0; transform: none; }
+
+.notif-panel { padding: 12px 16px; margin-bottom: 14px; }
+.notif-panel-title { margin-bottom: 8px; }
+.notif-item { padding: 6px 0; }
+.kpi-card[data-tip]:hover::after { top: auto; bottom: 8px; left: auto; right: 12px; transform: none; }
+
+@media (max-width: 768px) { .toolbar .search-box { flex: 1 1 100%; min-width: 0; } } /* Suchfeld auf dem Handy volle Breite statt Briefmarke */
 </style>
 </head>
 <body>
@@ -1553,7 +1560,13 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
   <div class="mobile-topbar" id="mobile-topbar">
     <div style="display:flex;align-items:center;gap:10px">
       <img id="mobile-company-logo" src="" alt="" style="display:none;height:22px;max-width:140px;object-fit:contain">
-      <img id="mobile-default-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgNDQiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJnMSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM3QzZFRjA7c3RvcC1vcGFjaXR5OjEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNkVCOEYwO3N0b3Atb3BhY2l0eToxIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIEljb246IHRocmVlIGNvbm5lY3RlZCBkb3RzIGZvcm1pbmcgYSBuZXR3b3JrL3JlbGF0aW9uc2hpcCBzeW1ib2wgLS0+CiAgPGNpcmNsZSBjeD0iMTAiIGN5PSIyMiIgcj0iNyIgZmlsbD0idXJsKCNnMSkiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjEwIiByPSI1IiBmaWxsPSJ1cmwoI2cxKSIgb3BhY2l0eT0iMC44NSIvPgogIDxjaXJjbGUgY3g9IjMwIiBjeT0iMzQiIHI9IjUiIGZpbGw9InVybCgjZzEpIiBvcGFjaXR5PSIwLjg1Ii8+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMjIiIHgyPSIzMCIgeTI9IjEwIiBzdHJva2U9InVybCgjZzEpIiBzdHJva2Utd2lkdGg9IjEuOCIgb3BhY2l0eT0iMC41Ii8+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMjIiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9InVybCgjZzEpIiBzdHJva2Utd2lkdGg9IjEuOCIgb3BhY2l0eT0iMC41Ii8+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9InVybCgjZzEpIiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iMC4zIi8+CiAgPCEtLSBXb3JkbWFyayAtLT4KICA8dGV4dCB4PSI0NiIgeT0iMTciIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksLWFwcGxlLXN5c3RlbSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBmb250LXdlaWdodD0iNTAwIiBsZXR0ZXItc3BhY2luZz0iMiIgZmlsbD0iIzkwOTBBOCI+Q09OTkVDVDwvdGV4dD4KICA8dGV4dCB4PSI0NCIgeT0iMzYiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksLWFwcGxlLXN5c3RlbSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE5IiBmb250LXdlaWdodD0iNzAwIiBsZXR0ZXItc3BhY2luZz0iLTAuNSIgZmlsbD0id2hpdGUiPlJlbGlvPC90ZXh0Pgo8L3N2Zz4="  alt="CRM" style="height:22px;max-width:140px;object-fit:contain">
+      <svg id="mobile-default-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 44" style="height:26px;width:auto" aria-label="Relio">
+        <defs><linearGradient id="g-mobile" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7C6EF0"/><stop offset="100%" stop-color="#6EB8F0"/></linearGradient></defs>
+        <circle cx="10" cy="22" r="7" fill="url(#g-mobile)"/><circle cx="30" cy="10" r="5" fill="url(#g-mobile)" opacity="0.85"/><circle cx="30" cy="34" r="5" fill="url(#g-mobile)" opacity="0.85"/>
+        <line x1="10" y1="22" x2="30" y2="10" stroke="url(#g-mobile)" stroke-width="1.8" opacity="0.5"/><line x1="10" y1="22" x2="30" y2="34" stroke="url(#g-mobile)" stroke-width="1.8" opacity="0.5"/>
+        <text x="46" y="16" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" letter-spacing="2.5" fill="var(--text3)">CONNECT</text>
+        <text x="44" y="37" font-family="system-ui,-apple-system,sans-serif" font-size="21" font-weight="800" letter-spacing="-0.5" fill="var(--text)">Relio</text>
+      </svg>
     </div>
     <div class="mobile-topbar-actions">
       <button class="icon-btn" onclick="openSettings()" style="width:32px;height:32px">
@@ -3407,6 +3420,17 @@ function initOberflaeche() {
   // Untertitel wird auch dann gespiegelt, wenn er erst spaeter gesetzt wird (z. B. Datum auf dem Dashboard)
   const mo = new MutationObserver(() => updateTopbarTitle());
   document.querySelectorAll(".page-subtitle").forEach(el => mo.observe(el, { childList: true, characterData: true, subtree: true }));
+  // Dashboard-Kacheln sind Abkuerzungen zur passenden Liste
+  const ziel = { "kpi-kunden": ["kontakte", null], "kpi-leads": ["kontakte", "Lead"], "kpi-deals": ["pipeline", null], "kpi-followups": ["aktivitaeten", null] };
+  Object.entries(ziel).forEach(([id, [seite, status]]) => {
+    const card = document.getElementById(id)?.closest(".kpi-card"); if(!card) return;
+    card.style.cursor = "pointer"; card.setAttribute("data-tip", status ? "Nur Leads anzeigen" : "Liste öffnen");
+    card.addEventListener("click", () => {
+      const nav = [...document.querySelectorAll(".sidebar .nav-item")].find(n => (n.getAttribute("onclick") || "").includes("'" + seite + "'"));
+      showPage(seite, nav || null);
+      if(seite === "kontakte") { const sel = document.getElementById("kontakte-status-filter"); if(sel) { sel.value = status || ""; } filterKontakteStatus(status || ""); }
+    });
+  });
   // Browser-Tooltips (title) in sofortige Einblendungen umsetzen
   document.addEventListener("mouseover", e => {
     const t = e.target.closest && e.target.closest("[title]");
