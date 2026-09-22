@@ -19,6 +19,8 @@ Deshalb gilt:
 
 - **Nie** die Datei neu formatieren, umsortieren oder „aufräumen". Diffs müssen klein und
   lesbar bleiben — sonst ist ein Review unmöglich.
+- Oberflächen-Änderungen gehören in die **V2-Schicht** am Ende des Stylesheets
+  (siehe `docs/ARCHITECTURE.md`, Abschnitt „Oberfläche V2“), nicht in die alten Regeln.
 - Neue Funktionen **beim thematisch passenden Block** einfügen (siehe
   [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) für die Zeilen-Landkarte).
 - Der Code-Stil ist kompakt: `const {data}=await sb.from("x").select("*")`, wenig

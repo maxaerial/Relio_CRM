@@ -1316,6 +1316,109 @@ tbody td { font-feature-settings: "zero" 0; }
   .pipeline-col { min-width: 200px; }
 }
 
+
+/* ── OBERFLÄCHE V2 (22.09.2026) ────────────────────────────────────────────────
+   Einklappbare Seitenleiste, Kopfzeile als Seitenkopf, dichtere Darstellung.
+   Bewusst als Überschreibung am Ende: die Regeln darüber bleiben unangetastet. */
+body { --sidebar-w: 232px; }
+body.sb-collapsed { --sidebar-w: 64px; }
+.sidebar { transition: width .2s cubic-bezier(.4,0,.2,1); overflow: visible; }
+.main { transition: margin-left .2s cubic-bezier(.4,0,.2,1); }
+
+/* Umschalter sitzt auf der Kante der Leiste */
+.sb-toggle { position: absolute; top: 20px; right: -13px; width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); display: flex; align-items: center;
+  justify-content: center; cursor: pointer; z-index: 101; box-shadow: var(--shadow-sm); padding: 0; transition: var(--transition); }
+.sb-toggle:hover { color: var(--accent2); border-color: var(--accent); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .2s; }
+body.sb-collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+/* Kopf der Leiste */
+.sidebar-logo-wrap { padding: 12px 14px 10px; display: flex; align-items: center; min-height: 64px; }
+#sidebar-relio-logo, #sidebar-company-logo { height: 44px !important; }
+body.sb-collapsed .sidebar-logo-wrap { padding: 12px 0 10px; }
+body.sb-collapsed #sidebar-logo-combo { justify-content: center; }
+body.sb-collapsed #sidebar-relio-logo { width: 36px; height: 36px !important; flex: none; }
+body.sb-collapsed #sidebar-relio-logo text, body.sb-collapsed #sidebar-logo-x, body.sb-collapsed #sidebar-company-logo { display: none !important; }
+
+/* Navigation */
+.sidebar-section-label { display: none; }
+.sidebar-nav { padding: 10px; }
+.nav-item { padding: 8px 10px; font-size: 13px; gap: 10px; border-radius: 8px; margin-bottom: 2px; }
+.nav-item svg { width: 17px; height: 17px; }
+.nav-item.active::before { content: ''; position: absolute; left: -10px; top: 7px; bottom: 7px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); }
+body.sb-collapsed .sidebar-nav { overflow: visible; } /* sonst schneidet die scrollbare Navigation die Einblendung ab */
+body.sb-collapsed .nav-item { justify-content: center; padding: 10px 0; }
+body.sb-collapsed .nav-item > span:not(.nav-badge) { display: none; }
+body.sb-collapsed .nav-item:hover > span:not(.nav-badge) { display: block; position: absolute; left: calc(100% + 14px); top: 50%;
+  transform: translateY(-50%); background: var(--text); color: var(--bg); font-size: 12px; font-weight: 600; padding: 5px 9px;
+  border-radius: 6px; white-space: nowrap; z-index: 120; box-shadow: var(--shadow-sm); pointer-events: none; }
+body.sb-collapsed .nav-badge { right: 8px; top: 5px; padding: 0 4px; min-width: 15px; height: 15px; line-height: 15px; font-size: 9px; text-align: center; }
+
+/* Aktionen und Nutzer am Fuss */
+.sidebar-actions { padding: 0 10px 8px; gap: 6px; }
+.sidebar-action-btn { padding: 7px 6px; font-size: 11.5px; }
+body.sb-collapsed .sidebar-actions { flex-direction: column; padding: 0 12px 8px; }
+body.sb-collapsed .sidebar-action-btn span { display: none; }
+body.sb-collapsed .sidebar-action-btn { padding: 8px 0; }
+.sidebar-bottom { padding: 10px; }
+.user-card { padding: 8px 10px; gap: 10px; }
+.user-avatar { width: 30px; height: 30px; }
+body.sb-collapsed .user-card { justify-content: center; padding: 8px 0; }
+body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
+
+/* Kopfzeile = Seitenkopf */
+.topbar { height: 52px; padding: 0 18px; gap: 14px; }
+.topbar-left { display: flex; align-items: center; min-width: 0; flex: 1; }
+.topbar-title { font-size: 16px; font-weight: 600; letter-spacing: -.2px; white-space: nowrap; }
+.topbar-sub { font-size: 12.5px; color: var(--text3); margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.topbar-right { gap: 8px; flex-shrink: 0; }
+.topbar-search { width: min(320px, 30vw); padding: 6px 11px; }
+.topbar-search:focus-within { width: min(400px, 38vw); }
+.icon-btn { width: 32px; height: 32px; }
+
+/* Dichte auf dem Desktop; die Mobilregeln weiter oben bleiben massgeblich */
+@media (min-width: 769px) {
+  .page > div[style*="padding:28px"], .page > div[style*="padding: 28px"] { padding: 16px 20px 28px !important; }
+  .page-header { margin-bottom: 10px; min-height: 0; }
+  .page-header.page-header-leer { display: none; }
+  .page-header .page-title, .page-header .page-subtitle, #page-hilfe .page-header h1 { display: none; }
+  .page-header-row { align-items: center; }
+  .kpi-row { gap: 12px; margin-bottom: 14px; }
+  .kpi-card { padding: 12px 14px; }
+  .kpi-card:has(.kpi-icon) { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; }
+  .kpi-card::before { width: 64px; height: 64px; opacity: .45; }
+  .kpi-icon { margin: 0; width: 36px; height: 36px; grid-row: 1 / span 3; }
+  #page-dashboard .page-header { display: none; }
+  .kpi-label { font-size: 10.5px; letter-spacing: .6px; margin-bottom: 2px; }
+  .kpi-value { font-size: 22px; letter-spacing: -.6px; }
+  .kpi-trend { margin-top: 2px; }
+  .card { margin-bottom: 14px; }
+  .card-header { padding: 10px 14px; }
+  .card-body { padding: 14px; }
+  .card-body-sm { padding: 10px 14px; }
+  .grid-2, .grid-3 { gap: 12px; }
+  thead th { padding: 8px 12px; }
+  tbody td { padding: 8px 12px; font-size: 12.5px; }
+  tbody td:nth-child(-n+4) { white-space: nowrap; }
+  .toolbar { flex-wrap: wrap; padding: 10px 14px; gap: 8px; row-gap: 8px; }
+  .search-box { flex: 1 1 140px; min-width: 120px; padding: 6px 10px; }
+  .filter-select { padding: 6px 26px 6px 10px; font-size: 12.5px; max-width: 170px; min-width: 0; flex: 0 1 auto; }
+  .toolbar .btn, .toolbar .btn-export { white-space: nowrap; flex-shrink: 0; }
+  .toolbar .btn-export { padding: 6px 10px; position: relative; }
+  #dashboard-charts-row .chart-wrap { height: 180px !important; }
+  #page-journey .chart-wrap[style*="220px"] { height: 190px !important; }
+}
+/* Wenig Platz: Werkzeugknoepfe nur als Symbol, Beschriftung beim Ueberfahren */
+@media (min-width: 769px) and (max-width: 1280px) {
+  .toolbar .btn-export .lbl { display: none; }
+  .toolbar .btn-export { padding: 6px 8px; }
+  .toolbar .btn-export:hover .lbl { display: block; position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--text); color: var(--bg); font-size: 11.5px; font-weight: 600; padding: 4px 8px; border-radius: 6px;
+    white-space: nowrap; z-index: 60; pointer-events: none; box-shadow: var(--shadow-sm); }
+}
+@media (max-width: 768px) { .sb-toggle { display: none; } }
 </style>
 </head>
 <body>
@@ -1426,6 +1529,7 @@ tbody td { font-feature-settings: "zero" 0; }
 
   <!-- Sidebar -->
   <div class="sidebar">
+    <button class="sb-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Seitenleiste ein- oder ausklappen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="sidebar-logo-wrap" style="cursor:default">
       <!-- Relio × Company logo area -->
       <div id="sidebar-logo-combo" style="display:flex;align-items:center;gap:10px;width:100%">
@@ -1509,7 +1613,7 @@ tbody td { font-feature-settings: "zero" 0; }
   <!-- Main -->
   <div class="main">
     <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-left"><div class="topbar-title" id="topbar-title">Dashboard</div><span class="topbar-sub" id="topbar-sub" style="display:none"></span></div>
       <div class="topbar-right">
         <div class="topbar-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -3167,15 +3271,59 @@ function setTheme(th) {
   document.documentElement.setAttribute("data-theme", th === "midnight" ? "" : th);
   document.querySelectorAll(".theme-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("theme-"+th)?.classList.add("active");
-  // Re-render charts with new colors
-  renderDashboard();
-  if(journeyData.length) renderJourneyCharts();
+  // Re-render charts with new colors — im Demo-Modus den Demo-Renderer, sonst leert sich das Dashboard
+  if(isDemoMode) { renderDemoDashboard(); } else { renderDashboard(); if(journeyData.length) renderJourneyCharts(); }
 }
 
+const SEITEN_TITEL = {"kontakt-detail":"Kontakt","journey-detail":"Touchpoint","aktivitaet-detail":"Aktivität","deal-detail":"Deal"};
 function updateTopbarTitle() {
-  const activeNav = document.querySelector(".nav-item.active span");
-  const tb = document.getElementById("topbar-title");
-  if(tb && activeNav) tb.textContent = activeNav.textContent;
+  const tb = document.getElementById("topbar-title"), sub = document.getElementById("topbar-sub");
+  const page = document.querySelector(".page.active");
+  if(!tb || !page) return;
+  const id = page.id.replace(/^page-/, "");
+  const activeNav = document.querySelector(".nav-item.active span:not(.nav-badge)");
+  // Reihenfolge: Seitentitel im Markup, aktiver Menuepunkt, feste Namen der Detailseiten, h1
+  tb.textContent = page.querySelector(".page-header .page-title")?.textContent.trim()
+    || (activeNav && activeNav.textContent.trim())
+    || SEITEN_TITEL[id]
+    || page.querySelector(".page-header h1")?.textContent.trim()
+    || tb.textContent;
+  if(sub) {
+    const t = page.querySelector(".page-header .page-subtitle")?.textContent.trim() || "";
+    sub.textContent = t; sub.style.display = t ? "" : "none";
+  }
+}
+
+// ── OBERFLÄCHE: SEITENLEISTE ──────────────────────────────────────────────────
+function applySidebar(collapsed) {
+  document.body.classList.toggle("sb-collapsed", !!collapsed);
+  const svg = document.getElementById("sidebar-relio-logo");
+  if(svg) svg.setAttribute("viewBox", collapsed ? "0 0 40 44" : "0 0 132 44");
+  try { localStorage.setItem("crm_sidebar", collapsed ? "collapsed" : "open"); } catch(_) {}
+  // Diagramme an die neue Breite anpassen, sobald die Animation durch ist
+  setTimeout(() => { window.dispatchEvent(new Event("resize")); }, 230);
+}
+function toggleSidebar() { applySidebar(!document.body.classList.contains("sb-collapsed")); }
+function initOberflaeche() {
+  let stand = null; try { stand = localStorage.getItem("crm_sidebar"); } catch(_) {}
+  applySidebar(stand === "collapsed");
+  // Beschriftung der Werkzeugknoepfe in ein Span, damit sie bei wenig Platz weichen kann
+  document.querySelectorAll(".toolbar .btn-export").forEach(b => {
+    [...b.childNodes].forEach(n => {
+      if(n.nodeType === 3 && n.textContent.trim()) { const sp = document.createElement("span"); sp.className = "lbl"; sp.textContent = n.textContent.trim(); b.replaceChild(sp, n); }
+    });
+  });
+  // Seitenkoepfe, die nur Titel und Untertitel tragen, sind jetzt in der Kopfzeile
+  document.querySelectorAll(".page-header").forEach(h => {
+    const k = h.cloneNode(true); k.querySelectorAll(".page-title,.page-subtitle,#hilfe-title").forEach(e => e.remove());
+    if(!k.textContent.trim() && !k.querySelector("button,svg,input,select")) h.classList.add("page-header-leer");
+  });
+  // Untertitel wird auch dann gespiegelt, wenn er erst spaeter gesetzt wird (z. B. Datum auf dem Dashboard)
+  const mo = new MutationObserver(() => updateTopbarTitle());
+  document.querySelectorAll(".page-subtitle").forEach(el => mo.observe(el, { childList: true, characterData: true, subtree: true }));
+  document.addEventListener("keydown", e => {
+    if(e.key === "[" && !e.metaKey && !e.ctrlKey && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "")) toggleSidebar();
+  });
 }
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
@@ -8684,6 +8832,7 @@ function importEmailVorlagen() {
   input.click();
 }
 
+initOberflaeche();
 </script>
 </body>
 </html>

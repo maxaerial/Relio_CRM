@@ -107,3 +107,24 @@ Tooltips flackern.
 letzten 100 Datensätze geladen und das Maximum erhöht wird. Das ist nicht
 race-condition-sicher; bei parallelem Anlegen können Nummern doppelt vergeben werden.
 Bekannt, bisher unkritisch bei der Nutzerzahl.
+
+## Oberfläche V2 (22.09.2026)
+
+Die Überarbeitung liegt bewusst als **Überschreibungsschicht am Ende des Haupt-Stylesheets**
+(Kommentar `OBERFLÄCHE V2`) plus einem kleinen JS-Block bei `updateTopbarTitle`. Die
+älteren Regeln darüber sind unangetastet; wer etwas ändern will, ändert es in der V2-Schicht.
+
+- **Seitenleiste einklappbar:** `body.sb-collapsed` schaltet `--sidebar-w` auf 64 px;
+  Umschalter ist der runde Knopf auf der Leistenkante (`.sb-toggle`, `toggleSidebar()`),
+  Tastenkürzel `[`. Stand in `localStorage.crm_sidebar`. Eingeklappt zeigt die Marke nur
+  die drei Kreise (`viewBox` wird per JS umgestellt), Menünamen erscheinen beim Überfahren.
+- **Kopfzeile ist der Seitenkopf:** `#topbar-title` + `#topbar-sub` werden von
+  `updateTopbarTitle()` aus `.page-header .page-title/.page-subtitle` befüllt, für
+  Detailseiten aus `SEITEN_TITEL`. Die alten Seitenköpfe bleiben im Markup (i18n hängt
+  daran), sind auf dem Desktop aber ausgeblendet; leere bekommen `page-header-leer`.
+  Ein MutationObserver spiegelt später gesetzte Untertitel (Datum auf dem Dashboard).
+- **Dichte:** Seitenrand 16/20 px, Kacheln als Raster mit Symbol links (`.kpi-card:has(.kpi-icon)`),
+  Tabellenzeilen 40 px, erste vier Spalten ohne Umbruch, Werkzeugleiste einzeilig solange es
+  passt; unter 1280 px werden `.btn-export`-Beschriftungen zu Einblendungen (`.lbl`, per JS gewrappt).
+- Alle Desktop-Regeln stehen in `@media (min-width: 769px)`, damit der Mobilblock (Zeile ~1148)
+  maßgeblich bleibt.
