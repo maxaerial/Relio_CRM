@@ -1440,6 +1440,51 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
 .profile-avatar-wrap { padding: 4px 0 12px; }
 .profile-avatar { width: 64px; height: 64px; font-size: 22px; }
 @media (max-width: 768px) { .settings-panel { width: 100%; } .settings-tabs { overflow-x: auto; } }
+
+/* ── FORMULARE & MODALE V2 ──────────────────────────────────────────────────── */
+.modal { max-width: 680px; border-radius: 12px; display: flex; flex-direction: column; max-height: 88vh; overflow: hidden; }
+.modal-head { padding: 0 14px 0 20px; height: 52px; box-sizing: border-box; flex-shrink: 0; }
+.modal-body { padding: 16px 20px; overflow-y: auto; flex: 1 1 auto; }
+.modal-footer { padding: 12px 20px; flex-shrink: 0; flex-direction: row-reverse; gap: 8px; }
+.form-grid { gap: 10px 12px; }
+.field { gap: 4px; }
+.field label { font-size: 10.5px; letter-spacing: .6px; }
+.field input, .field select, .field textarea { padding: 7px 10px; font-size: 12.5px; }
+.form-section { grid-column: 1 / -1; font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+  color: var(--accent2); padding-top: 10px; margin-top: 2px; border-top: 1px solid var(--border); }
+.form-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+/* ── DETAILSEITEN V2: eine Kopfzeile, Stammdaten links, Rest volle Breite ──── */
+#page-kontakt-detail .page-header, #page-journey-detail .page-header, #page-aktivitaet-detail .page-header, #page-deal-detail .page-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+#page-kontakt-detail .page-header > div, #page-journey-detail .page-header > div, #page-aktivitaet-detail .page-header > div, #page-deal-detail .page-header > div {
+  margin-bottom: 0 !important; padding-left: 0 !important; }
+#page-kontakt-detail .page-header h1, #page-journey-detail .page-header h1, #page-aktivitaet-detail .page-header h1, #page-deal-detail .page-header h1 { font-size: 17px !important; }
+.page[id$="-detail"] .page-header .btn-primary:not(:first-child) { background: var(--bg2); color: var(--text2); border: 1px solid var(--border); }
+.page[id$="-detail"] .page-header .btn-primary:not(:first-child):hover { color: var(--text); border-color: var(--border2); filter: none; }
+[id$="detail-content"] { padding: 0 0 32px !important; }
+[id$="detail-content"] > div[style*="1fr 1fr 1fr"] { grid-template-columns: minmax(300px, 400px) 1fr !important; gap: 14px !important; }
+
+/* ── E-MAIL-SEITE: Empfaengerfilter duerfen umbrechen ──────────────────────── */
+#page-email div:has(> #email-branche-filter) { flex-wrap: wrap !important; }
+#page-email div:has(> #email-branche-filter) > .filter-select { max-width: none !important; flex: 1 1 130px !important; }
+#hilfe-content { max-width: 960px !important; }
+
+/* ── PIPELINE: Status als farbige Kante statt schraegem Band ───────────────── */
+.deal-ribbon { display: none; }
+.deal-card { border-left-width: 3px; }
+.deal-card:has(.deal-ribbon-gewonnen) { border-left-color: var(--green); }
+.deal-card:has(.deal-ribbon-verloren) { border-left-color: var(--red); }
+.deal-card:has(.deal-ribbon-pausiert) { border-left-color: var(--text3); }
+.pipeline-col-body { padding: 8px; }
+.deal-card { padding: 9px 10px; }
+
+/* ── EINBLENDUNGEN statt Browser-Tooltips (title wird beim Ueberfahren umgesetzt) ── */
+[data-tip] { position: relative; }
+[data-tip]:hover::after { content: attr(data-tip); position: absolute; left: 50%; top: calc(100% + 6px); transform: translateX(-50%);
+  background: var(--text); color: var(--bg); font-size: 11.5px; font-weight: 600; padding: 4px 8px; border-radius: 6px;
+  white-space: nowrap; z-index: 300; pointer-events: none; box-shadow: var(--shadow-sm); }
+.topbar-right [data-tip]:hover::after, .toolbar > :last-child[data-tip]:hover::after { left: auto; right: 0; transform: none; }
 </style>
 </head>
 <body>
@@ -2563,17 +2608,24 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     <div class="modal-head"><h3 data-i18n="add_contact">Neuer Kontakt</h3><button class="modal-close" onclick="closeModal('modal-kontakt')">×</button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="field"><label data-i18n="company">Unternehmen</label><input id="k-unternehmen"></div>
+        <div class="form-section form-full">Firma &amp; Ansprechpartner</div>
+        <div class="field form-full"><label data-i18n="company">Unternehmen</label><input id="k-unternehmen"></div>
         <div class="field"><label data-i18n="firstname">Vorname</label><input id="k-vorname"></div>
         <div class="field"><label data-i18n="lastname">Nachname</label><input id="k-nachname"></div>
         <div class="field"><label>Geschlecht</label><select id="k-geschlecht"><option value="">– nicht angegeben –</option><option value="m">Männlich</option><option value="f">Weiblich</option></select></div>
-        <div class="field form-full"><label>Individueller Satz (für E-Mail)</label><input id="k-individueller-satz" placeholder="z.B. die Lage direkt am See mit diesem Panoramablick ist einfach unschlagbar"></div>
         <div class="field"><label>Sprache</label><select id="k-sprache"><option value="">– nicht angegeben –</option><option value="de">Deutsch</option><option value="en">Englisch</option><option value="it">Italienisch</option><option value="fr">Französisch</option></select></div>
-        <div class="field"><label>Newsletter</label><select id="k-newsletter"><option value="">– nicht angegeben –</option><option value="ja">Ja</option><option value="nein">Nein</option></select></div>
-        <div class="field"><label>Stadt</label><input id="k-ort"></div>
-        <div class="field"><label>Land</label><input id="k-land" placeholder="z.B. Deutschland"></div>
+        <div class="form-section form-full">Kontakt</div>
         <div class="field"><label data-i18n="email">E-Mail</label><input id="k-email" type="email"></div>
         <div class="field"><label data-i18n="phone">Telefon</label><input id="k-telefon"></div>
+        <div class="field"><label>Stadt</label><input id="k-ort"></div>
+        <div class="field"><label>Land</label><input id="k-land" placeholder="z.B. Deutschland"></div>
+        <div class="field"><label>Homepage</label><input id="k-homepage" type="url" placeholder="https://..."></div>
+        <div class="form-section form-full">Vertrieb</div>
+        <div class="field"><label data-i18n="status">Status</label>
+          <select id="k-status" class="status-select-de">
+            <option>Lead</option><option data-i18n="active">Aktiv</option>            <option data-i18n="inactive">Inaktiv</option><option data-i18n="closed">Abgeschlossen</option>
+          </select>
+        </div>
         <div class="field"><label data-i18n="channel">Kanal</label><select id="k-kanal" onchange="if(this.value==='__custom'){this.nextElementSibling.style.display='';this.nextElementSibling.focus()}else{this.nextElementSibling.style.display='none'}">
               <option value="">— bitte wählen —</option>
               <option>Instagram</option>
@@ -2589,11 +2641,6 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
               <option value="__custom">Eigene Eingabe…</option>
             </select>
             <input id="k-kanal-custom" placeholder="Kanal eingeben…" style="display:none;margin-top:6px;width:100%"></div>
-        <div class="field"><label data-i18n="status">Status</label>
-          <select id="k-status" class="status-select-de">
-            <option>Lead</option><option data-i18n="active">Aktiv</option>            <option data-i18n="inactive">Inaktiv</option><option data-i18n="closed">Abgeschlossen</option>
-          </select>
-        </div>
         <div class="field"><label data-i18n="industry">Branche</label>
           <select id="k-branche">
             <option value="">— bitte wählen —</option>
@@ -2607,8 +2654,10 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
           </select>
         </div>
         <div class="field"><label data-i18n="deal_value">Deal-Wert (€)</label><input id="k-dealwert" type="number"></div>
-        <div class="field"><label>Homepage</label><input id="k-homepage" type="url" placeholder="https://..."></div>
         <div class="field"><label>Key Account</label><select id="k-key_account"><option value="">— nicht zugewiesen —</option></select></div>
+        <div class="field"><label>Newsletter</label><select id="k-newsletter"><option value="">– nicht angegeben –</option><option value="ja">Ja</option><option value="nein">Nein</option></select></div>
+        <div class="form-section form-full">Für E-Mails &amp; Notizen</div>
+        <div class="field form-full"><label>Individueller Satz (für E-Mail)</label><input id="k-individueller-satz" placeholder="z.B. die Lage direkt am See mit diesem Panoramablick ist einfach unschlagbar"></div>
         <div class="field form-full"><label data-i18n="comment">Kommentar</label><textarea id="k-kommentar" rows="2"></textarea></div>
       </div>
     </div>
@@ -2987,17 +3036,22 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     <div class="modal-body">
       <input type="hidden" id="ek-id">
       <div class="form-grid">
-        <div class="field"><label>Unternehmen</label><input id="ek-unternehmen"></div>
+        <div class="form-section form-full">Firma &amp; Ansprechpartner</div>
+        <div class="field form-full"><label>Unternehmen</label><input id="ek-unternehmen"></div>
         <div class="field"><label>Vorname</label><input id="ek-vorname"></div>
         <div class="field"><label>Nachname</label><input id="ek-nachname"></div>
         <div class="field"><label>Geschlecht</label><select id="ek-geschlecht"><option value="">– nicht angegeben –</option><option value="m">Männlich</option><option value="f">Weiblich</option></select></div>
-        <div class="field form-full"><label>Individueller Satz (für E-Mail)</label><input id="ek-individueller-satz" placeholder="z.B. die Lage direkt am See mit diesem Panoramablick ist einfach unschlagbar"></div>
         <div class="field"><label>Sprache</label><select id="ek-sprache"><option value="">– nicht angegeben –</option><option value="de">Deutsch</option><option value="en">Englisch</option><option value="it">Italienisch</option><option value="fr">Französisch</option></select></div>
-        <div class="field"><label>Newsletter</label><select id="ek-newsletter"><option value="">– nicht angegeben –</option><option value="ja">Ja</option><option value="nein">Nein</option></select></div>
-        <div class="field"><label>Stadt</label><input id="ek-ort"></div>
-        <div class="field"><label>Land</label><input id="ek-land" placeholder="z.B. Deutschland"></div>
+        <div class="form-section form-full">Kontakt</div>
         <div class="field"><label>E-Mail</label><input id="ek-email" type="email"></div>
         <div class="field"><label>Telefon</label><input id="ek-telefon"></div>
+        <div class="field"><label>Stadt</label><input id="ek-ort"></div>
+        <div class="field"><label>Land</label><input id="ek-land" placeholder="z.B. Deutschland"></div>
+        <div class="field"><label>Homepage / Website</label><input id="ek-homepage" type="url" placeholder="https://..."></div>
+        <div class="form-section form-full">Vertrieb</div>
+        <div class="field"><label>Status</label>
+          <select id="ek-status"><option>Lead</option><option>Aktiv</option><option>Inaktiv</option><option>Abgeschlossen</option></select>
+        </div>
         <div class="field"><label>Kanal</label><select id="ek-kanal" onchange="if(this.value==='__custom'){this.nextElementSibling.style.display='';this.nextElementSibling.focus()}else{this.nextElementSibling.style.display='none'}">
               <option value="">— bitte wählen —</option>
               <option>Instagram</option>
@@ -3013,9 +3067,6 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
               <option value="__custom">Eigene Eingabe…</option>
             </select>
             <input id="ek-kanal-custom" placeholder="Kanal eingeben…" style="display:none;margin-top:6px;width:100%"></div>
-        <div class="field"><label>Status</label>
-          <select id="ek-status"><option>Lead</option><option>Aktiv</option><option>Inaktiv</option><option>Abgeschlossen</option></select>
-        </div>
         <div class="field"><label>Branche</label>
           <select id="ek-branche">
             <option value="">— bitte wählen —</option>
@@ -3029,8 +3080,10 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
           </select>
         </div>
         <div class="field"><label>Deal-Wert (€)</label><input id="ek-dealwert" type="number"></div>
-        <div class="field"><label>Homepage / Website</label><input id="ek-homepage" type="url" placeholder="https://..."></div>
         <div class="field"><label>Key Account</label><select id="ek-key_account"><option value="">— nicht zugewiesen —</option></select></div>
+        <div class="field"><label>Newsletter</label><select id="ek-newsletter"><option value="">– nicht angegeben –</option><option value="ja">Ja</option><option value="nein">Nein</option></select></div>
+        <div class="form-section form-full">Für E-Mails &amp; Notizen</div>
+        <div class="field form-full"><label>Individueller Satz (für E-Mail)</label><input id="ek-individueller-satz" placeholder="z.B. die Lage direkt am See mit diesem Panoramablick ist einfach unschlagbar"></div>
         <div class="field form-full"><label>Kommentar</label><textarea id="ek-kommentar" rows="2" style="resize:vertical"></textarea></div>
       </div>
     </div>
@@ -3354,6 +3407,11 @@ function initOberflaeche() {
   // Untertitel wird auch dann gespiegelt, wenn er erst spaeter gesetzt wird (z. B. Datum auf dem Dashboard)
   const mo = new MutationObserver(() => updateTopbarTitle());
   document.querySelectorAll(".page-subtitle").forEach(el => mo.observe(el, { childList: true, characterData: true, subtree: true }));
+  // Browser-Tooltips (title) in sofortige Einblendungen umsetzen
+  document.addEventListener("mouseover", e => {
+    const t = e.target.closest && e.target.closest("[title]");
+    if(t && !t.dataset.tip && t.closest("#app, .settings-panel, .modal")) { t.dataset.tip = t.getAttribute("title"); t.removeAttribute("title"); }
+  }, true);
   document.addEventListener("keydown", e => {
     if(e.key === "[" && !e.metaKey && !e.ctrlKey && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "")) toggleSidebar();
   });
@@ -4909,6 +4967,7 @@ function closeSettings() { document.getElementById("settings-panel").classList.r
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 let cStatus=null, cPipe=null;
 async function renderDashboard() {
+  if(isDemoMode) return renderDemoDashboard();
   applyI18n();
   const [k, d, a, allA] = await Promise.all([
     sb.from("kontakte").select("unternehmen,vorname,nachname,email,status,ort"),
@@ -4969,6 +5028,7 @@ let jSearch="", jPhase="", jKunde="", jSort="date_desc", journeyData=[], cJourne
 async function renderJourney(search, phase) {
   if(search!==undefined) jSearch=search;
   if(phase!==undefined) jPhase=phase;
+  if(isDemoMode) return renderJourneyDemo();
   const {data} = await sb.from("journey").select("*").order("created_at",{ascending:false});
   journeyData = data||[];
   // Populate kunde filter dropdown
@@ -5441,6 +5501,7 @@ function clickSortA(col) {
 }
 async function renderKontakte(s,st) {
   if(s!==undefined) kSearch=s; if(st!==undefined) kStatus=st;
+  if(isDemoMode) return renderKontakteDemo();   // Demo: nie gegen Supabase, sonst leert sich die Liste
   const {data}=await sb.from("kontakte").select("*").order("created_at",{ascending:false});
   kontakteData=data||[];
   renderKontakteCharts(kontakteData);
@@ -5633,6 +5694,7 @@ let dealsData=[];
 let cPipePhases=null, cPipeDeals2=null;
 
 async function renderPipeline() {
+  if(isDemoMode) return renderPipelineDemo();
   const {data}=await sb.from("deals").select("*").order("created_at",{ascending:false});
   dealsData=data||[];
   filterPipeline();
@@ -5967,6 +6029,7 @@ async function addDeal() {
 let aFilter="", aSearch="", aktivData=[], cAktivTyp=null, cAktivPrio=null;
 async function renderAktivitaeten(f) {
   if(f!==undefined) aFilter=f;
+  if(isDemoMode) return renderAktivitaetenDemo();
   const {data}=await sb.from("aktivitaeten").select("*").order("created_at",{ascending:false});
   aktivData=data||[];
 
