@@ -1325,8 +1325,8 @@ body.sb-collapsed { --sidebar-w: 64px; }
 .sidebar { transition: width .2s cubic-bezier(.4,0,.2,1); overflow: visible; }
 .main { transition: margin-left .2s cubic-bezier(.4,0,.2,1); }
 
-/* Umschalter sitzt auf der Kante der Leiste */
-.sb-toggle { position: absolute; top: 20px; right: -13px; width: 26px; height: 26px; border-radius: 50%;
+/* Umschalter sitzt auf der Kante der Leiste, mittig im Leistenkopf */
+.sb-toggle { position: absolute; top: 13px; right: -13px; width: 26px; height: 26px; border-radius: 50%;
   border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); display: flex; align-items: center;
   justify-content: center; cursor: pointer; z-index: 101; box-shadow: var(--shadow-sm); padding: 0; transition: var(--transition); }
 .sb-toggle:hover { color: var(--accent2); border-color: var(--accent); }
@@ -1334,11 +1334,12 @@ body.sb-collapsed { --sidebar-w: 64px; }
 body.sb-collapsed .sb-toggle svg { transform: rotate(180deg); }
 
 /* Kopf der Leiste */
-.sidebar-logo-wrap { padding: 12px 14px 10px; display: flex; align-items: center; min-height: 64px; }
-#sidebar-relio-logo, #sidebar-company-logo { height: 44px !important; }
-body.sb-collapsed .sidebar-logo-wrap { padding: 12px 0 10px; }
+/* Leistenkopf genau so hoch wie die Kopfzeile (52 px), damit die Trennlinien buendig sind */
+.sidebar-logo-wrap { height: 52px; min-height: 0; box-sizing: border-box; padding: 0 14px; display: flex; align-items: center; }
+#sidebar-relio-logo, #sidebar-company-logo { height: 34px !important; }
+body.sb-collapsed .sidebar-logo-wrap { padding: 0; }
 body.sb-collapsed #sidebar-logo-combo { justify-content: center; }
-body.sb-collapsed #sidebar-relio-logo { width: 36px; height: 36px !important; flex: none; }
+body.sb-collapsed #sidebar-relio-logo { width: 34px; height: 34px !important; flex: none; }
 body.sb-collapsed #sidebar-relio-logo text, body.sb-collapsed #sidebar-logo-x, body.sb-collapsed #sidebar-company-logo { display: none !important; }
 
 /* Navigation */
@@ -1374,12 +1375,15 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
 .topbar-sub { font-size: 12.5px; color: var(--text3); margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .topbar-right { gap: 8px; flex-shrink: 0; }
-.topbar-search { width: min(320px, 30vw); padding: 6px 11px; }
-.topbar-search:focus-within { width: min(400px, 38vw); }
+.topbar-search { width: 320px; flex: none; padding: 6px 11px; transition: border-color var(--transition); } /* starr: waechst weder mit dem Fenster noch beim Klick */
+.topbar-search:focus-within { width: 320px; }
+@media (max-width: 1100px) { .topbar-search, .topbar-search:focus-within { width: 220px; } }
 .icon-btn { width: 32px; height: 32px; }
 
 /* Dichte auf dem Desktop; die Mobilregeln weiter oben bleiben massgeblich */
 @media (min-width: 769px) {
+  html { overflow-y: scroll; scrollbar-gutter: stable; } /* Scrollleiste immer da: kein Springen beim Reiterwechsel */
+  .page { padding: 0; }                          /* der innere Wrapper traegt den Rand allein */
   .page > div[style*="padding:28px"], .page > div[style*="padding: 28px"] { padding: 16px 20px 28px !important; }
   .page-header { margin-bottom: 10px; min-height: 0; }
   .page-header.page-header-leer { display: none; }
