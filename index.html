@@ -1423,6 +1423,23 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     white-space: nowrap; z-index: 60; pointer-events: none; box-shadow: var(--shadow-sm); }
 }
 @media (max-width: 768px) { .sb-toggle { display: none; } }
+
+/* ── EINSTELLUNGEN V2: fuenf Reiter statt zehn Abschnitte untereinander ───── */
+.settings-panel { width: 540px; display: flex; flex-direction: column; }
+.settings-head { height: 52px; box-sizing: border-box; padding: 0 16px 0 20px; flex-shrink: 0; }
+.settings-tabs { display: flex; gap: 2px; padding: 8px 12px 0; border-bottom: 1px solid var(--border); background: var(--bg2); position: sticky; top: 0; z-index: 2; flex-shrink: 0; }
+.settings-tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 8px 12px 10px; font-family: var(--font); font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; transition: var(--transition); }
+.settings-tab:hover { color: var(--text); }
+.settings-tab.active { color: var(--accent2); border-bottom-color: var(--accent); font-weight: 600; }
+.settings-section { display: none; padding: 18px 20px; }
+.settings-section.sichtbar { display: block; }
+.settings-section-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; text-transform: none; letter-spacing: 0; }
+.settings-section-hint { font-size: 12px; color: var(--text3); margin-bottom: 14px; line-height: 1.5; }
+.settings-section .profile-save-btn { width: auto; display: block; margin-left: auto; padding: 8px 16px; margin-top: 12px; }
+.settings-section .btn { justify-content: center; }
+.profile-avatar-wrap { padding: 4px 0 12px; }
+.profile-avatar { width: 64px; height: 64px; font-size: 22px; }
+@media (max-width: 768px) { .settings-panel { width: 100%; } .settings-tabs { overflow-x: auto; } }
 </style>
 </head>
 <body>
@@ -2248,9 +2265,17 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     <h3 data-i18n="settings">Einstellungen</h3>
     <button class="modal-close" onclick="closeSettings()">×</button>
   </div>
+  <div class="settings-tabs" id="settings-tabs">
+    <button class="settings-tab" data-tab="profil" onclick="settingsTab('profil')">Profil</button>
+    <button class="settings-tab" data-tab="firma" onclick="settingsTab('firma')">Firma</button>
+    <button class="settings-tab" data-tab="email" onclick="settingsTab('email')">E-Mail</button>
+    <button class="settings-tab" data-tab="darstellung" onclick="settingsTab('darstellung')">Darstellung</button>
+    <button class="settings-tab" data-tab="konto" onclick="settingsTab('konto')">Konto</button>
+  </div>
   <!-- Profile Section -->
-  <div class="settings-section">
-    <div class="settings-section-title">Mein Profil</div>
+  <div class="settings-section" data-tab="profil">
+    <div class="settings-section-title">Profil</div>
+    <div class="settings-section-hint">Name und Firma erscheinen unten links in der Seitenleiste.</div>
     <div class="profile-avatar-wrap">
       <div class="profile-avatar" id="profile-avatar-display" onclick="document.getElementById('profile-img-input').click()" title="Bild ändern">
         <span id="profile-avatar-initials">M</span>
@@ -2271,9 +2296,9 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
   </div>
 
   <!-- Company Logo Section -->
-  <div class="settings-section">
-    <div class="settings-section-title">🏢 Unternehmens-Logo</div>
-    <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Wird oben links in der Sidebar angezeigt — ersetzt das Standard-CRM-Logo.</div>
+  <div class="settings-section" data-tab="firma">
+    <div class="settings-section-title">Firmenlogo</div>
+    <div class="settings-section-hint">Erscheint oben links neben dem Relio-Logo, für alle im Team.</div>
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
       <!-- Current logo preview -->
       <div id="company-logo-preview-wrap" style="width:120px;height:48px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">
@@ -2282,15 +2307,15 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
       </div>
       <div style="flex:1">
         <input type="file" id="company-logo-input" accept="image/*" style="display:none" onchange="handleCompanyLogo(this)">
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('company-logo-input').click()" style="margin-bottom:6px;width:100%">
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('company-logo-input').click()" style="margin-bottom:6px">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Logo hochladen
         </button>
-        <button id="btn-save-company-logo" class="btn btn-primary btn-sm" style="display:none;margin-bottom:6px;width:100%" onclick="saveCompanyLogoExplicit()">
+        <button id="btn-save-company-logo" class="btn btn-primary btn-sm" style="display:none;margin-bottom:6px" onclick="saveCompanyLogoExplicit()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2l11 0 5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Logo speichern
         </button>
-        <button class="btn btn-sm" style="background:transparent;color:var(--red);border:1px solid rgba(240,110,110,.2);width:100%" onclick="removeCompanyLogo()">
+        <button class="btn btn-sm btn-danger-ghost" onclick="removeCompanyLogo()">
           × Logo entfernen
         </button>
       </div>
@@ -2298,8 +2323,9 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     <div style="font-size:11px;color:var(--text3)">Empfohlen: PNG oder SVG, mind. 200px breit, transparenter Hintergrund.</div>
   </div>
 
-  <div class="settings-section">
-    <div class="settings-section-title">📧 Meine Absender-E-Mail</div>
+  <div class="settings-section" data-tab="email">
+    <div class="settings-section-title">Meine Absenderadresse</div>
+    <div class="settings-section-hint">Gilt nur für dich. Jeder im Team versendet mit seiner eigenen Adresse.</div>
 
     <!-- Info -->
     <div style="margin-bottom:16px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px">
@@ -2326,8 +2352,9 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     <div id="email-config-msg" style="font-size:12px;text-align:center;margin-top:8px;display:none"></div>
   </div>
 
-  <div class="settings-section">
-    <div class="settings-section-title">🔑 Euer Resend-Account (Abrechnung)</div>
+  <div class="settings-section" data-tab="email">
+    <div class="settings-section-title">Versand-Konto (Resend)</div>
+    <div class="settings-section-hint">Gilt für die ganze Firma. Ohne eigenen Schlüssel läuft der Versand über den Test-Zugang.</div>
     <div style="font-size:12px;color:var(--text3);margin-bottom:12px" id="resend-key-info">Lädt…</div>
     <div class="profile-form">
       <div class="field form-full">
@@ -2336,12 +2363,12 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
       </div>
     </div>
     <button type="button" class="profile-save-btn" onclick="saveResendApiKey()">API Key speichern</button>
-    <button type="button" class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;justify-content:center" onclick="removeResendApiKey()">Eigenen Key entfernen (zurück zum Test-Account)</button>
+    <button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="removeResendApiKey()">Eigenen Key entfernen (zurück zum Test-Account)</button>
     <div id="resend-key-msg" style="font-size:12px;text-align:center;margin-top:8px;display:none"></div>
   </div>
 
-  <div class="settings-section">
-    <div class="settings-section-title">🌐 Absender-Domain (Firma)</div>
+  <div class="settings-section" data-tab="firma">
+    <div class="settings-section-title">Absender-Domain</div>
     <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Einmal pro Firma einrichten. Danach kann jeder Mitarbeiter oben seine eigene Adresse auf dieser Domain als Absender nutzen (z.B. max@eurefirma.com, sandra@eurefirma.com). Läuft über den oben hinterlegten Resend-Account.</div>
     <div id="domain-status-info" style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">Lädt…</div>
     <div class="profile-form">
@@ -2351,13 +2378,14 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
       </div>
     </div>
     <button type="button" class="profile-save-btn" onclick="createDomain()">Domain einrichten</button>
-    <button type="button" class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;justify-content:center" onclick="checkDomain()">Verifizierung prüfen</button>
+    <button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="checkDomain()">Verifizierung prüfen</button>
     <div id="domain-dns-records" style="margin-top:12px"></div>
     <div id="domain-msg" style="font-size:12px;text-align:center;margin-top:8px;display:none"></div>
   </div>
 
-  <div class="settings-section">
-    <div class="settings-section-title">Newsletter-Anmeldung erfassen</div>
+  <div class="settings-section" data-tab="email">
+    <div class="settings-section-title">Newsletter-Anmeldung von Hand erfassen</div>
+    <div class="settings-section-hint">Legt den Kontakt an und schreibt einen Journey-Eintrag, so wie es das Formular auf der Website tut.</div>
     <div class="profile-form" style="margin-bottom:8px">
       <div class="field"><label>E-Mail</label><input id="nl-email" type="email" placeholder="kunde@beispiel.de"></div>
       <div class="field"><label>Vorname</label><input id="nl-vorname" placeholder="Max"></div>
@@ -2372,8 +2400,9 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     })()">Newsletter-Anmeldung speichern</button>
   </div>
 
-  <div class="settings-section" id="team-settings-section">
-    <div class="settings-section-title">Team / Verantwortliche</div>
+  <div class="settings-section" id="team-settings-section" data-tab="firma">
+    <div class="settings-section-title">Team</div>
+    <div class="settings-section-hint">Wer hier steht, ist als Verantwortlicher und Key Account auswählbar.</div>
     <div id="team-members-list" style="margin-bottom:12px"></div>
     <div class="profile-form">
       <div class="field">
@@ -2393,7 +2422,7 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     <div style="font-size:11px;color:var(--text3);margin-top:8px">Ohne Häkchen erscheint der Name nur im Dropdown „Verantwortlich" bei Aktivitäten, ohne Login-Zugriff. Mit Häkchen bekommt die Person eine Einladungs-Mail und sieht danach dieselben Kontakte, Deals, Journeys und Aktivitäten wie du.</div>
   </div>
 
-  <div class="settings-section">
+  <div class="settings-section" data-tab="darstellung">
     <div class="settings-section-title" data-i18n="language">Sprache</div>
     <div class="lang-grid">
       <button class="lang-btn active" onclick="setLang('de')" id="lang-de"><span class="lang-flag">🇩🇪</span> Deutsch</button>
@@ -2402,7 +2431,7 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
       <button class="lang-btn" onclick="setLang('fr')" id="lang-fr"><span class="lang-flag">🇫🇷</span> Français</button>
     </div>
   </div>
-  <div class="settings-section">
+  <div class="settings-section" data-tab="darstellung">
     <div class="settings-section-title" data-i18n="color_theme">Farbschema</div>
     <div class="theme-grid">
       <button class="theme-btn active" onclick="setTheme('midnight')" id="theme-midnight" title="Midnight">
@@ -2473,8 +2502,8 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
       </button>
     </div>
   </div>
-  <div class="settings-section">
-    <div class="settings-section-title">🚀 Ersteinrichtung</div>
+  <div class="settings-section" data-tab="konto" style="order:2">
+    <div class="settings-section-title">Erste Schritte</div>
     <div style="font-size:12px;color:var(--text2);line-height:1.7">
 
       <div style="background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px">
@@ -2486,13 +2515,13 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
       </div>
 
       <div style="font-weight:700;color:var(--text1);margin-bottom:6px">1. Profil vervollständigen</div>
-      <div style="color:var(--text3);margin-bottom:12px">Vorname, Nachname und Firma oben eintragen und speichern. Diese Daten erscheinen unten links in der Sidebar.</div>
+      <div style="color:var(--text3);margin-bottom:12px">Vorname, Nachname und Firma im Reiter „Profil“ eintragen und speichern. Diese Daten erscheinen unten links in der Sidebar.</div>
 
       <div style="font-weight:700;color:var(--text1);margin-bottom:6px">2. E-Mail Konfiguration einrichten</div>
-      <div style="color:var(--text3);margin-bottom:12px">Trage in der Sektion <strong style="color:var(--text2)">📧 E-Mail Konfiguration</strong> deine Absender-E-Mail und deinen Absendernamen ein. Der Versand läuft automatisch über Resend — keine weiteren Zugangsdaten nötig.</div>
+      <div style="color:var(--text3);margin-bottom:12px">Trage im Reiter <strong style="color:var(--text2)">E-Mail</strong> deine Absender-E-Mail und deinen Absendernamen ein. Der Versand läuft automatisch über Resend — keine weiteren Zugangsdaten nötig.</div>
 
       <div style="font-weight:700;color:var(--text1);margin-bottom:6px">3. Team einrichten</div>
-      <div style="color:var(--text3);margin-bottom:12px">Unter „Team / Verantwortliche" Teammitglieder mit Namen und E-Mail eintragen. Diese Namen erscheinen im Dropdown bei Aktivitäten.</div>
+      <div style="color:var(--text3);margin-bottom:12px">Im Reiter „Firma“ unter „Team“ Teammitglieder mit Namen und E-Mail eintragen. Diese Namen erscheinen im Dropdown bei Aktivitäten.</div>
 
       <div style="font-weight:700;color:var(--text1);margin-bottom:6px">4. Erste Kontakte anlegen</div>
       <div style="color:var(--text3);margin-bottom:4px">Kontakte → + Kontakt oder CSV-Import nutzen. Wichtige Felder für E-Mail-Versand:</div>
@@ -2511,17 +2540,17 @@ body.sb-collapsed .user-card > div:not(.user-avatar) { display: none; }
     </div>
   </div>
 
-  <div class="settings-section">
-    <div class="settings-section-title" data-i18n="account">Account</div>
+  <div class="settings-section" data-tab="konto" style="order:1">
+    <div class="settings-section-title" data-i18n="account">Konto</div>
     <div style="font-size:13px;color:var(--text2)" id="settings-email"></div>
-    <button class="btn btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="doLogout()">
+    <button class="btn btn-ghost" style="margin-top:12px" onclick="doLogout()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span data-i18n="logout">Logout</span>
     </button>
     <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
       <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">⚠ Gefahrenzone</div>
       <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Dein Account wird dauerhaft gelöscht. Alle deine Daten bleiben erhalten (Kontakte, Journey etc.) — nur dein Login wird entfernt.</div>
-      <button class="btn btn-sm" style="background:transparent;color:var(--red);border:1px solid rgba(240,110,110,.3);width:100%;justify-content:center" onclick="deleteAccount()">
+      <button class="btn btn-sm btn-danger-ghost" onclick="deleteAccount()">
         Account löschen
       </button>
     </div>
@@ -3048,7 +3077,7 @@ const LANGS = {
     dashboard:"Dashboard",journey:"Customer Journey",contacts:"Kontakte",pipeline:"Pipeline",
     activities:"Aktivitäten",settings:"Einstellungen",logout:"Abmelden",login:"Anmelden",
     register:"Registrieren",email:"E-Mail",password:"Passwort",fullname:"Vollständiger Name",
-    navigation:"Navigation",live:"Live",language:"Sprache",color_theme:"Farbschema",account:"Account",
+    navigation:"Navigation",live:"Live",language:"Sprache",color_theme:"Farbschema",account:"Konto",
     save:"Speichern",cancel:"Abbrechen",search:"Suchen…",loading:"Laden…",
     total_clients:"Kunden gesamt",leads:"Leads",active_deals:"Aktive Deals",open_followups:"Offene Aktivitäten",
     contacts_by_status:"Kontakte nach Status",pipeline_by_phase:"Pipeline nach Phase (€)",
@@ -4849,8 +4878,19 @@ function renderAll() {
 }
 
 // ── SETTINGS ─────────────────────────────────────────────────────────────────
+
+// Einstellungen: Reiter umschalten, letzter Reiter wird gemerkt
+function settingsTab(name) {
+  document.querySelectorAll(".settings-tab").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".settings-section").forEach(x => x.classList.toggle("sichtbar", x.dataset.tab === name));
+  try { localStorage.setItem("crm_settings_tab", name); } catch(_) {}
+  const panel = document.getElementById("settings-panel"); if(panel) panel.scrollTop = 0;
+}
 function openSettings() {
   document.getElementById("settings-panel").classList.add("open");
+  let t = "profil"; try { t = localStorage.getItem("crm_settings_tab") || t; } catch(_) {}
+  if(!document.querySelector(".settings-tab[data-tab='"+t+"']")) t = "profil";
+  settingsTab(t);
   if(isDemoMode) {
     applyDemoProfile();
   } else {
