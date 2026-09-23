@@ -102,3 +102,13 @@ Mandantenfähigkeit läuft über `company_id` auf jedem Datensatz, aufgelöst ü
   (Resend). Nicht als Vorbild nehmen.
 - Der Publishable Key steht hart in `index.html:2900`. Das ist bei Supabase so
   vorgesehen (er ist öffentlich), ersetzt aber **keine** RLS.
+
+## Supabase: GRANTs bei neuen Tabellen (seit 30.10.2026 Pflicht)
+Supabase vergibt seit dem 30.10.2026 für neue Tabellen keine Rechte mehr automatisch
+an die API-Rollen. Jede Migration, die eine Tabelle oder View anlegt, braucht in
+derselben Datei: `grant select, insert, update, delete on <schema>.<tabelle> to
+authenticated, service_role;` (plus `anon` nur bei bewusst öffentlichen Tabellen,
+plus Sequences bei serial/identity). Ohne GRANT antwortet die API mit „permission
+denied", unabhängig von RLS. Prüfabfrage: `~/Projects/presio/scripts/grant-check.sql`
+(Schema im WHERE anpassen).
+
